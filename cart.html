@@ -20,11 +20,11 @@
         </nav>
     </header>
 
-    <main class="max-w-2xl mx-auto py-20 px-6">
-        <h1 class="text-2xl font-light tracking-widest uppercase mb-10 text-center">Shopping Bag</h1>
+    <main class="max-w-3xl mx-auto py-20 px-6">
+        <h1 class="text-2xl font-light tracking-widest uppercase mb-12 text-center">Shopping Bag</h1>
         
-        <div id="cart-container" class="bg-gray-50/50 p-8 border border-gray-200 space-y-6">
-            <!-- Dynamic Cart Items will load here -->
+        <div id="cart-container" class="bg-gray-50 p-8 border border-gray-200 space-y-6">
+            <!-- Dynamic items load here -->
         </div>
     </main>
 
@@ -34,35 +34,39 @@
             let cart = JSON.parse(localStorage.getItem('aura_cart') || '[]');
 
             if (cart.length === 0) {
-                container.innerHTML = '<p class="text-xs text-gray-500 text-center py-6 uppercase tracking-widest">Your shopping bag is empty.</p>' +
-                    '<div class="text-center pt-4"><a href="shop.html" class="inline-block bg-black text-white text-[10px] uppercase font-bold tracking-[0.2em] px-8 py-3.5 hover:bg-gray-800">Explore Collection</a></div>';
+                container.innerHTML = '<p class="text-xs text-gray-500 text-center py-10 uppercase tracking-widest">Your shopping bag is empty.</p>' +
+                    '<div class="text-center pt-2"><a href="shop.html" class="inline-block bg-black text-white text-[10px] uppercase font-bold tracking-[0.2em] px-8 py-3.5 hover:bg-gray-800 transition">Explore Collection</a></div>';
                 return;
             }
 
-            let html = '';
+            let html = '<div class="space-y-4">';
             let total = 0;
 
             cart.forEach((item, index) => {
-                let priceNum = parseFloat(item.price.replace('£', ''));
+                let priceNum = parseFloat(item.price.replace('£', '')) || 0;
                 total += priceNum;
-                html += '<div class="flex justify-between items-center border-b border-gray-200 pb-4">' +
-                    '<div>' +
-                        '<h4 class="text-xs font-bold uppercase tracking-wider">' + item.name + '</h4>' +
-                        '<p class="text-[11px] text-gray-500 mt-1">Quantity: 1</p>' +
+                
+                let imgHtml = item.img ? '<img src="' + item.img + '" class="w-14 h-14 object-cover mr-4">' : '';
+
+                html += '<div class="flex items-center justify-between bg-white p-4 border border-gray-200">' +
+                    '<div class="flex items-center">' +
+                        imgHtml +
+                        '<div>' +
+                            '<h4 class="text-xs font-bold uppercase tracking-wider">' + item.name + '</h4>' +
+                            '<p class="text-[11px] text-gray-500 mt-0.5">' + item.price + '</p>' +
+                        '</div>' +
                     '</div>' +
-                    '<div class="text-right">' +
-                        '<p class="text-xs font-medium">' + item.price + '</p>' +
-                        '<button onclick="removeItem(' + index + ')" class="text-[10px] text-red-600 uppercase tracking-widest mt-1 hover:underline">Remove</button>' +
-                    '</div>' +
+                    '<button onclick="removeItem(' + index + ')" class="text-[10px] text-red-600 font-bold uppercase tracking-widest hover:underline px-3 py-1 bg-red-50">Remove</button>' +
                 '</div>';
             });
 
-            html += '<div class="flex justify-between items-center pt-4 text-sm font-bold uppercase tracking-wider">' +
-                '<span>Total</span>' +
-                '<span>£' + total.toFixed(2) + '</span>' +
+            html += '</div>' +
+            '<div class="border-t border-gray-200 pt-6 flex justify-between items-center text-xs font-bold uppercase tracking-widest">' +
+                '<span>Total Amount</span>' +
+                '<span class="text-sm">£' + total.toFixed(2) + '</span>' +
             '</div>' +
-            '<div class="pt-4">' +
-                '<a href="checkout.html" class="block text-center bg-black text-white text-[10px] uppercase font-bold tracking-[0.25em] py-4 hover:bg-gray-800 transition">Proceed to Checkout</a>' +
+            '<div class="pt-2">' +
+                '<a href="checkout.html" class="block text-center bg-black text-white text-[10px] uppercase font-bold tracking-[0.25em] py-4 hover:bg-gray-800 transition">Proceed to Secure Checkout</a>' +
             '</div>';
 
             container.innerHTML = html;
