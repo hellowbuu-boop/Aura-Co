@@ -28,9 +28,7 @@
         </div>
 
         <!-- Product Grid -->
-        <div id="product-grid" class="grid grid-cols-1 md:grid-cols-3 gap-10">
-            <!-- Default static products will be rendered along with custom admin products -->
-        </div>
+        <div id="product-grid" class="grid grid-cols-1 md:grid-cols-3 gap-10"></div>
     </main>
 
     <!-- Admin Add/Edit Modal -->
@@ -103,13 +101,13 @@
                 if (isAdmin) {
                     let stockToggleText = p.stock === 'Out of Stock' ? 'Make In Stock' : 'Make Out of Stock';
                     adminControls = '<div class="mt-4 pt-3 border-t border-gray-100 flex justify-between items-center bg-gray-50 p-2">' +
-                        '<button onclick="editProduct(' + index + ')" class="text-[9px] font-bold uppercase tracking-widest bg-blue-600 text-white px-2.5 py-1">Edit</button>' +
-                        '<button onclick="toggleStock(' + index + ')" class="text-[9px] font-bold uppercase tracking-widest ' + (p.stock === 'Out of Stock' ? 'bg-green-600 text-green-100' : 'bg-amber-500 text-white') + ' px-2.5 py-1">' + stockToggleText + '</button>' +
-                        '<button onclick="deleteProduct(' + index + ')" class="text-[9px] font-bold uppercase tracking-widest bg-red-600 text-white px-2.5 py-1">Delete</button>' +
+                        '<button onclick="event.stopPropagation(); editProduct(' + index + ');" class="text-[9px] font-bold uppercase tracking-widest bg-blue-600 text-white px-2.5 py-1">Edit</button>' +
+                        '<button onclick="event.stopPropagation(); toggleStock(' + index + ');" class="text-[9px] font-bold uppercase tracking-widest ' + (p.stock === 'Out of Stock' ? 'bg-green-600 text-green-100' : 'bg-amber-500 text-white') + ' px-2.5 py-1">' + stockToggleText + '</button>' +
+                        '<button onclick="event.stopPropagation(); deleteProduct(' + index + ');" class="text-[9px] font-bold uppercase tracking-widest bg-red-600 text-white px-2.5 py-1">Delete</button>' +
                     '</div>';
                 }
 
-                html += '<div class="group cursor-pointer border border-gray-100 p-4 bg-white">' +
+                html += '<div class="group border border-gray-100 p-4 bg-white">' +
                     '<div class="overflow-hidden bg-gray-100 mb-4">' +
                         '<img src="' + p.img + '" class="w-full h-96 object-cover group-hover:scale-105 transition duration-500">' +
                     '</div>' +
