@@ -7,23 +7,23 @@
     <script src='https://cdn.tailwindcss.com'></script>
 </head>
 <body class='bg-white text-gray-900 font-sans antialiased'>
-    <header class='border-b border-gray-100 py-6 px-8 flex justify-between items-center bg-white sticky top-0 z-50'>
-        <a href='index.html' class='text-sm font-bold tracking-[0.25em] uppercase'>AURA & CO.</a>
-        <nav class='hidden md:flex space-x-8 text-xs tracking-widest uppercase'>
-            <a href='index.html' class='hover:text-gray-500 transition'>Home</a>
-            <a href='shop.html' class='hover:text-gray-500 transition'>Shop</a>
-            <a href='cart.html' class='hover:text-gray-500 transition'>Cart</a>
-            <a href='checkout.html' class='hover:text-gray-500 transition'>Checkout</a>
-            <a href='admin.html' class='hover:text-gray-500 transition text-gray-400'>Admin</a>
+    <header class='border-b border-gray-100 py-6 px-12 flex justify-between items-center bg-white sticky top-0 z-50'>
+        <a href='index.html' class='text-xs font-bold tracking-[0.3em] uppercase'>AURA & CO.</a>
+        <nav class='hidden md:flex space-x-10 text-[11px] tracking-[0.2em] uppercase font-medium text-gray-800'>
+            <a href='index.html' class='hover:text-gray-400 transition'>Home</a>
+            <a href='shop.html' class='hover:text-gray-400 transition'>Shop</a>
+            <a href='cart.html' class='hover:text-gray-400 transition'>Cart</a>
+            <a href='checkout.html' class='hover:text-gray-400 transition'>Checkout</a>
+            <a href='admin.html' class='text-gray-400 hover:text-black transition'>Admin</a>
         </nav>
     </header>
 
-    <section id='hero-banner' class='relative h-[70vh] bg-gray-900 flex items-center justify-center text-center px-6 transition-all duration-500' style='background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url("https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1600&q=80"); background-size: cover; background-position: center;'>
+    <section id='hero-banner' class='relative h-[75vh] bg-gray-900 flex items-center justify-center text-center px-6 transition-all duration-500' style='background-image: linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)), url("https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1600&q=80"); background-size: cover; background-position: center;'>
         <div class='max-w-2xl text-white space-y-4'>
-            <p class='text-xs tracking-[0.3em] uppercase text-gray-300'>Edinburgh Collection</p>
+            <p class='text-[10px] tracking-[0.4em] uppercase text-gray-300'>Edinburgh Collection</p>
             <h1 class='text-4xl md:text-6xl font-light tracking-tight uppercase'>Refined Simplicity.</h1>
-            <div class='pt-4'>
-                <a href='shop.html' class='bg-white text-black px-8 py-3 text-xs uppercase font-bold tracking-widest hover:bg-gray-200 transition'>Explore Collection</a>
+            <div class='pt-6'>
+                <a href='shop.html' class='bg-white text-black px-10 py-4 text-[10px] uppercase font-bold tracking-[0.25em] hover:bg-gray-100 transition shadow-sm'>Explore Collection</a>
             </div>
         </div>
     </section>
@@ -33,7 +33,7 @@
             const savedBanner = localStorage.getItem('aura_main_banner');
             const heroSection = document.getElementById('hero-banner');
             if (savedBanner && heroSection) {
-                heroSection.style.backgroundImage = 'linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url("' + savedBanner + '")';
+                heroSection.style.backgroundImage = 'linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)), url("' + savedBanner + '")';
             }
         });
     </script>

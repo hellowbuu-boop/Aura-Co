@@ -7,32 +7,33 @@
     <script src='https://cdn.tailwindcss.com'></script>
 </head>
 <body class='bg-white text-gray-900 font-sans antialiased'>
-    <header class='border-b border-gray-100 py-6 px-8 flex justify-between items-center bg-white sticky top-0 z-50'>
-        <a href='index.html' class='text-sm font-bold tracking-[0.25em] uppercase'>AURA & CO.</a>
-        <nav class='hidden md:flex space-x-8 text-xs tracking-widest uppercase'>
-            <a href='index.html' class='hover:text-gray-500 transition'>Home</a>
-            <a href='shop.html' class='hover:text-gray-500 transition'>Shop</a>
-            <a href='cart.html' class='hover:text-gray-500 transition'>Cart</a>
+    <header class='border-b border-gray-100 py-6 px-12 flex justify-between items-center bg-white sticky top-0 z-50'>
+        <a href='index.html' class='text-xs font-bold tracking-[0.3em] uppercase'>AURA & CO.</a>
+        <nav class='hidden md:flex space-x-10 text-[11px] tracking-[0.2em] uppercase font-medium text-gray-800'>
+            <a href='index.html' class='hover:text-gray-400 transition'>Home</a>
+            <a href='shop.html' class='hover:text-gray-400 transition'>Shop</a>
+            <a href='cart.html' class='hover:text-gray-400 transition'>Cart</a>
             <a href='checkout.html' class='text-black font-bold transition'>Checkout</a>
+            <a href='admin.html' class='text-gray-400 hover:text-black transition'>Admin</a>
         </nav>
     </header>
-    <section class='max-w-xl mx-auto py-16 px-6'>
-        <h2 class='text-xl font-light tracking-tight uppercase mb-8 text-center'>Secure Checkout</h2>
-        <form id='checkout-form' onsubmit='validateAndCheckout(event)' class='space-y-6 bg-gray-50 p-8 border border-gray-200'>
+    <section class='max-w-xl mx-auto py-20 px-6'>
+        <h2 class='text-2xl font-light tracking-widest uppercase mb-10 text-center'>Secure Checkout</h2>
+        <form id='checkout-form' onsubmit='validateAndCheckout(event)' class='space-y-6 bg-gray-50/50 p-10 border border-gray-200'>
             <div>
-                <label class='block text-[11px] font-medium text-gray-700 uppercase tracking-wider mb-1'>Full Name</label>
-                <input type='text' id='cust-name' required placeholder='John Doe' class='border border-gray-300 p-3 text-xs w-full focus:outline-black bg-white'>
+                <label class='block text-[10px] font-bold text-gray-700 uppercase tracking-[0.2em] mb-2'>Full Name</label>
+                <input type='text' id='cust-name' required placeholder='John Doe' class='border border-gray-300 p-3.5 text-xs w-full focus:outline-black bg-white tracking-wide'>
             </div>
             <div>
-                <label class='block text-[11px] font-medium text-gray-700 uppercase tracking-wider mb-1'>Email Address (For Order Confirmation)</label>
-                <input type='email' id='cust-email' required placeholder='john@example.com' class='border border-gray-300 p-3 text-xs w-full focus:outline-black bg-white'>
+                <label class='block text-[10px] font-bold text-gray-700 uppercase tracking-[0.2em] mb-2'>Email Address (For Receipt)</label>
+                <input type='email' id='cust-email' required placeholder='john@example.com' class='border border-gray-300 p-3.5 text-xs w-full focus:outline-black bg-white tracking-wide'>
             </div>
             <div>
-                <label class='block text-[11px] font-medium text-gray-700 uppercase tracking-wider mb-1'>Debit / Credit Card Number (16 Digits)</label>
-                <input type='text' id='card-number' maxlength='16' required placeholder='1234567812345678' class='border border-gray-300 p-3 text-xs w-full focus:outline-black bg-white'>
-                <p id='card-error' class='text-[10px] text-red-600 mt-1 hidden'>Invalid Card! Please enter a valid 16-digit numeric card number.</p>
+                <label class='block text-[10px] font-bold text-gray-700 uppercase tracking-[0.2em] mb-2'>Debit / Credit Card Number (16 Digits)</label>
+                <input type='text' id='card-number' maxlength='16' required placeholder='1234567812345678' class='border border-gray-300 p-3.5 text-xs w-full focus:outline-black bg-white tracking-widest font-mono'>
+                <p id='card-error' class='text-[11px] text-red-600 mt-2 hidden font-medium'>Please enter a valid 16-digit numeric card number.</p>
             </div>
-            <button type='submit' class='w-full bg-black text-white text-xs font-bold tracking-widest uppercase py-4 hover:bg-gray-800 transition'>Complete Order & Send Receipt</button>
+            <button type='submit' class='w-full bg-black text-white text-[10px] font-bold tracking-[0.25em] uppercase py-4 hover:bg-gray-800 transition mt-4'>Complete Secure Order</button>
         </form>
     </section>
     <script>
@@ -51,9 +52,9 @@
                 cardError.classList.add('hidden');
             }
 
-            alert('Payment Successful! Order placed for ' + custName);
-            const subject = encodeURIComponent('New Order from Aura & Co.');
-            const body = encodeURIComponent('Customer Name: ' + custName + '\nEmail: ' + custEmail + '\nCard Verified Successfully (16 digits).');
+            alert('Payment Verified & Order Placed Successfully!');
+            const subject = encodeURIComponent('New Order: Aura & Co.');
+            const body = encodeURIComponent('Customer Name: ' + custName + '\nEmail: ' + custEmail + '\nCard Status: Verified 16-Digit Card.');
             window.location.href = 'mailto:hellowbuu@gmail.com?subject=' + subject + '&body=' + body;
         }
     </script>
