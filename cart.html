@@ -1,40 +1,81 @@
 ﻿<!DOCTYPE html>
-<html lang='en'>
+<html lang="en">
 <head>
-    <meta charset='UTF-8'>
-    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-    <title>Cart | AURA & CO.</title>
-    <script src='https://cdn.tailwindcss.com'></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Bag | AURA & CO.</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class='bg-white text-gray-900 font-sans antialiased'>
-    <header class='border-b border-gray-100 py-6 px-12 flex justify-between items-center bg-white sticky top-0 z-50'>
-        <a href='index.html' class='text-xs font-bold tracking-[0.3em] uppercase'>AURA & CO.</a>
-        <nav class='hidden md:flex space-x-8 text-[11px] tracking-[0.2em] uppercase font-medium text-gray-800'>
-            <a href='index.html' class='hover:text-gray-400 transition'>Home</a>
-            <a href='male.html' class='hover:text-gray-400 transition'>Male</a>
-            <a href='female.html' class='hover:text-gray-400 transition'>Female</a>
-            <a href='kids.html' class='hover:text-gray-400 transition'>Kids</a>
-            <a href='shop.html' class='hover:text-gray-400 transition'>Shop All</a>
-            <a href='cart.html' class='text-black font-bold transition'>Cart</a>
-            <a href='checkout.html' class='hover:text-gray-400 transition'>Checkout</a>
+<body class="bg-white text-gray-900 font-sans antialiased">
+    <header class="border-b border-gray-100 py-6 px-12 flex justify-between items-center bg-white sticky top-0 z-50">
+        <a href="index.html" class="text-xs font-bold tracking-[0.3em] uppercase">AURA & CO.</a>
+        <nav class="hidden md:flex space-x-8 text-[11px] tracking-[0.2em] uppercase font-medium text-gray-800">
+            <a href="index.html" class="hover:text-gray-400 transition">Home</a>
+            <a href="male.html" class="hover:text-gray-400 transition">Male</a>
+            <a href="female.html" class="hover:text-gray-400 transition">Female</a>
+            <a href="kids.html" class="hover:text-gray-400 transition">Kids</a>
+            <a href="shop.html" class="hover:text-gray-400 transition">Shop All</a>
+            <a href="cart.html" class="text-black font-bold transition">Cart</a>
+            <a href="checkout.html" class="hover:text-gray-400 transition">Checkout</a>
         </nav>
     </header>
-    <main class='max-w-xl mx-auto py-20 px-6'>
-        <h1 class='text-2xl font-light tracking-widest uppercase mb-10 text-center'>Shopping Bag</h1>
-        <div class='border border-gray-200 p-8 space-y-6 bg-gray-50/50'>
-            <div class='flex justify-between items-center border-b border-gray-200 pb-6'>
-                <div>
-                    <h3 class='text-xs font-bold uppercase tracking-wider'>Cashmere Overcoat</h3>
-                    <p class='text-[11px] text-gray-500 mt-1'>Quantity: 1</p>
-                </div>
-                <p class='text-xs font-bold tracking-wider'>£240.00</p>
-            </div>
-            <div class='flex justify-between items-center pt-2'>
-                <span class='text-xs font-bold uppercase tracking-widest'>Total</span>
-                <span class='text-xs font-bold tracking-wider'>£240.00</span>
-            </div>
-            <a href='checkout.html' class='block text-center w-full bg-black text-white text-[10px] font-bold tracking-[0.25em] uppercase py-4 hover:bg-gray-800 transition mt-6'>Proceed to Checkout</a>
+
+    <main class="max-w-2xl mx-auto py-20 px-6">
+        <h1 class="text-2xl font-light tracking-widest uppercase mb-10 text-center">Shopping Bag</h1>
+        
+        <div id="cart-container" class="bg-gray-50/50 p-8 border border-gray-200 space-y-6">
+            <!-- Dynamic Cart Items will load here -->
         </div>
     </main>
+
+    <script>
+        function loadCart() {
+            const container = document.getElementById('cart-container');
+            let cart = JSON.parse(localStorage.getItem('aura_cart') || '[]');
+
+            if (cart.length === 0) {
+                container.innerHTML = '<p class="text-xs text-gray-500 text-center py-6 uppercase tracking-widest">Your shopping bag is empty.</p>' +
+                    '<div class="text-center pt-4"><a href="shop.html" class="inline-block bg-black text-white text-[10px] uppercase font-bold tracking-[0.2em] px-8 py-3.5 hover:bg-gray-800">Explore Collection</a></div>';
+                return;
+            }
+
+            let html = '';
+            let total = 0;
+
+            cart.forEach((item, index) => {
+                let priceNum = parseFloat(item.price.replace('£', ''));
+                total += priceNum;
+                html += '<div class="flex justify-between items-center border-b border-gray-200 pb-4">' +
+                    '<div>' +
+                        '<h4 class="text-xs font-bold uppercase tracking-wider">' + item.name + '</h4>' +
+                        '<p class="text-[11px] text-gray-500 mt-1">Quantity: 1</p>' +
+                    '</div>' +
+                    '<div class="text-right">' +
+                        '<p class="text-xs font-medium">' + item.price + '</p>' +
+                        '<button onclick="removeItem(' + index + ')" class="text-[10px] text-red-600 uppercase tracking-widest mt-1 hover:underline">Remove</button>' +
+                    '</div>' +
+                '</div>';
+            });
+
+            html += '<div class="flex justify-between items-center pt-4 text-sm font-bold uppercase tracking-wider">' +
+                '<span>Total</span>' +
+                '<span>£' + total.toFixed(2) + '</span>' +
+            '</div>' +
+            '<div class="pt-4">' +
+                '<a href="checkout.html" class="block text-center bg-black text-white text-[10px] uppercase font-bold tracking-[0.25em] py-4 hover:bg-gray-800 transition">Proceed to Checkout</a>' +
+            '</div>';
+
+            container.innerHTML = html;
+        }
+
+        function removeItem(index) {
+            let cart = JSON.parse(localStorage.getItem('aura_cart') || '[]');
+            cart.splice(index, 1);
+            localStorage.setItem('aura_cart', JSON.stringify(cart));
+            loadCart();
+        }
+
+        window.addEventListener('DOMContentLoaded', loadCart);
+    </script>
 </body>
 </html>
