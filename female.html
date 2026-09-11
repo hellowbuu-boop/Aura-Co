@@ -1,36 +1,78 @@
 ﻿<!DOCTYPE html>
-<html lang='en'>
+<html lang="en">
 <head>
-    <meta charset='UTF-8'>
-    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Female Collection | AURA & CO.</title>
-    <script src='https://cdn.tailwindcss.com'></script>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class='bg-white text-gray-900 font-sans antialiased'>
-    <header class='border-b border-gray-100 py-6 px-12 flex justify-between items-center bg-white sticky top-0 z-50'>
-        <a href='index.html' class='text-xs font-bold tracking-[0.3em] uppercase'>AURA & CO.</a>
-        <nav class='hidden md:flex space-x-8 text-[11px] tracking-[0.2em] uppercase font-medium text-gray-800'>
-            <a href='index.html' class='hover:text-gray-400 transition'>Home</a>
-            <a href='male.html' class='hover:text-gray-400 transition'>Male</a>
-            <a href='female.html' class='text-black font-bold'>Female</a>
-            <a href='kids.html' class='hover:text-gray-400 transition'>Kids</a>
-            <a href='shop.html' class='hover:text-gray-400 transition'>Shop All</a>
-            <a href='cart.html' class='hover:text-gray-400 transition'>Cart</a>
-            <a href='checkout.html' class='hover:text-gray-400 transition'>Checkout</a>
+<body class="bg-white text-gray-900 font-sans antialiased">
+    <header class="border-b border-gray-100 py-6 px-12 flex justify-between items-center bg-white sticky top-0 z-50">
+        <a href="index.html" id="secret-admin-logo" class="text-xs font-bold tracking-[0.3em] uppercase select-none cursor-pointer">AURA & CO.</a>
+        <nav class="hidden md:flex space-x-8 text-[11px] tracking-[0.2em] uppercase font-medium text-gray-800">
+            <a href="index.html" class="hover:text-gray-400 transition">Home</a>
+            <a href="male.html" class="hover:text-gray-400 transition">Male</a>
+            <a href="female.html" class="text-black font-bold">Female</a>
+            <a href="kids.html" class="hover:text-gray-400 transition">Kids</a>
+            <a href="shop.html" class="hover:text-gray-400 transition">Shop All</a>
+            <a href="cart.html" class="hover:text-gray-400 transition">Cart</a>
+            <a href="checkout.html" class="hover:text-gray-400 transition">Checkout</a>
+            <span id="admin-badge" class="hidden text-red-600 font-bold tracking-widest bg-red-50 px-2 py-1 text-[9px]">ADMIN MODE ON</span>
         </nav>
     </header>
-    <main class='max-w-7xl mx-auto py-20 px-8'>
-        <h1 class='text-2xl font-light tracking-widest uppercase mb-12 text-center'>Female Collection</h1>
-        <div class='grid grid-cols-1 md:grid-cols-3 gap-10'>
-            <div class='group cursor-pointer'>
-                <div class='overflow-hidden bg-gray-100 mb-4'>
-                    <img src='https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=600&q=80' class='w-full h-96 object-cover group-hover:scale-105 transition duration-500'>
-                </div>
-                <h3 class='text-xs uppercase tracking-widest font-medium'>Tailored Linen Trousers</h3>
-                <p class='text-xs text-gray-500 mt-1'>£95.00</p>
-                <a href='cart.html' class='block text-center mt-4 bg-black text-white text-[10px] uppercase tracking-[0.2em] py-3 hover:bg-gray-800 transition'>Add to Bag</a>
-            </div>
-        </div>
+
+    <main class="max-w-7xl mx-auto py-20 px-8">
+        <h1 class="text-2xl font-light tracking-widest uppercase mb-12 text-center">Female Collection</h1>
+        <div id="product-grid" class="grid grid-cols-1 md:grid-cols-3 gap-10"></div>
     </main>
+
+    <script>
+        function renderCategory() {
+            let products = JSON.parse(localStorage.getItem('aura_custom_products') || '[]');
+            const isAdmin = localStorage.getItem('aura_admin_logged') === 'true';
+            if (isAdmin) document.getElementById('admin-badge').classList.remove('hidden');
+
+            const grid = document.getElementById('product-grid');
+            let html = '';
+
+            products.forEach((p, index) => {
+                if (p.category !== 'female' && p.category !== 'shop') return;
+                let stockBadge = p.stock === 'Out of Stock' ? '<span class="text-[10px] text-red-600 font-bold uppercase tracking-wider block mt-1">Out of Stock</span>' : '';
+                let adminControls = isAdmin ? '<div class="mt-4 pt-3 border-t border-gray-100 flex justify-between items-center bg-gray-50 p-2"><button onclick="event.stopPropagation(); deleteProduct(' + index + ');" class="text-[9px] font-bold uppercase tracking-widest bg-red-600 text-white px-2.5 py-1">Delete</button></div>' : '';
+
+                html += '<div class="group border border-gray-100 p-4 bg-white"><div class="overflow-hidden bg-gray-100 mb-4"><img src="' + p.img + '" class="w-full h-96 object-cover"></div><h3 class="text-xs uppercase tracking-widest font-medium">' + p.name + '</h3><p class="text-xs text-gray-500 mt-1">' + p.price + '</p>' + stockBadge + '<button onclick="addToCart(\'' + p.name + '\', \'' + p.price + '\')" class="w-full mt-4 bg-black text-white text-[10px] uppercase tracking-[0.2em] py-3 hover:bg-gray-800 transition">Add to Bag</button>' + adminControls + '</div>';
+            });
+            grid.innerHTML = html || '<p class="text-xs text-gray-500 col-span-3 text-center uppercase tracking-widest">No products in this collection.</p>';
+        }
+
+        function addToCart(name, price) {
+            let cart = JSON.parse(localStorage.getItem('aura_cart') || '[]');
+            cart.push({ name, price });
+            localStorage.setItem('aura_cart', JSON.stringify(cart));
+            alert('Added to bag!');
+        }
+
+        function deleteProduct(index) {
+            if (confirm('Delete product?')) {
+                let products = JSON.parse(localStorage.getItem('aura_custom_products'));
+                products.splice(index, 1);
+                localStorage.setItem('aura_custom_products', JSON.stringify(products));
+                renderCategory();
+            }
+        }
+
+        let tapCount = 0;
+        document.getElementById('secret-admin-logo').addEventListener('click', (e) => {
+            e.preventDefault();
+            tapCount++;
+            if (tapCount === 5) {
+                let isAdmin = localStorage.getItem('aura_admin_logged') === 'true';
+                localStorage.setItem('aura_admin_logged', (!isAdmin).toString());
+                location.reload();
+            } else if (tapCount === 1) { setTimeout(() => { tapCount = 0; }, 1000); }
+        });
+
+        window.addEventListener('DOMContentLoaded', renderCategory);
+    </script>
 </body>
 </html>
