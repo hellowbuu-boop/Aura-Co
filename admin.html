@@ -14,7 +14,7 @@
         </nav>
     </header>
 
-    <main class='max-w-3xl mx-auto py-16 px-6 space-y-12'>
+    <main class='max-w-4xl mx-auto py-16 px-6 space-y-12'>
         <h1 class='text-2xl font-light tracking-widest uppercase text-center'>Store Management Dashboard</h1>
         
         <!-- Hero Banner Section -->
@@ -40,20 +40,37 @@
                     <input type='text' id='prod-price' placeholder='150.00' class='border border-gray-300 p-3.5 text-xs w-full focus:outline-black bg-white'>
                 </div>
             </div>
-            <div>
-                <label class='block text-[10px] font-bold text-gray-700 uppercase tracking-[0.2em] mb-2'>Category Section</label>
-                <select id='prod-category' class='border border-gray-300 p-3.5 text-xs w-full focus:outline-black bg-white uppercase tracking-wider'>
-                    <option value='shop'>Shop All</option>
-                    <option value='male'>Male Collection</option>
-                    <option value='female'>Female Collection</option>
-                    <option value='kids'>Kids Collection</option>
-                </select>
+            <div class='grid grid-cols-1 md:grid-cols-2 gap-6'>
+                <div>
+                    <label class='block text-[10px] font-bold text-gray-700 uppercase tracking-[0.2em] mb-2'>Category Section</label>
+                    <select id='prod-category' class='border border-gray-300 p-3.5 text-xs w-full focus:outline-black bg-white uppercase tracking-wider'>
+                        <option value='shop'>Shop All</option>
+                        <option value='male'>Male Collection</option>
+                        <option value='female'>Female Collection</option>
+                        <option value='kids'>Kids Collection</option>
+                    </select>
+                </div>
+                <div>
+                    <label class='block text-[10px] font-bold text-gray-700 uppercase tracking-[0.2em] mb-2'>Stock Status</label>
+                    <select id='prod-stock' class='border border-gray-300 p-3.5 text-xs w-full focus:outline-black bg-white uppercase tracking-wider'>
+                        <option value='In Stock'>In Stock</option>
+                        <option value='Out of Stock'>Out of Stock</option>
+                    </select>
+                </div>
             </div>
             <div>
                 <label class='block text-[10px] font-bold text-gray-700 uppercase tracking-[0.2em] mb-2'>Product Image Direct URL</label>
                 <input type='text' id='prod-img' placeholder='https://images.unsplash.com/...' class='border border-gray-300 p-3.5 text-xs w-full focus:outline-black bg-white'>
             </div>
             <button onclick='addProduct()' class='w-full bg-black text-white text-[10px] font-bold tracking-[0.25em] uppercase py-3.5 hover:bg-gray-800 transition'>Add Product to Catalog</button>
+        </div>
+
+        <!-- Manage Products Section -->
+        <div class='bg-gray-50/50 p-8 border border-gray-200 space-y-6'>
+            <h3 class='text-xs font-bold uppercase tracking-[0.2em] text-gray-800'>3. Manage Existing Products (Delete / Stock Toggle)</h3>
+            <div id='admin-product-list' class='space-y-4'>
+                <!-- Dynamically populated products -->
+            </div>
         </div>
     </main>
 
@@ -72,6 +89,7 @@
             const name = document.getElementById('prod-name').value.trim();
             const price = document.getElementById('prod-price').value.trim();
             const category = document.getElementById('prod-category').value;
+            const stock = document.getElementById('prod-stock').value;
             const img = document.getElementById('prod-img').value.trim();
 
             if (!name || !price || !img) {
@@ -79,16 +97,63 @@
                 return;
             }
 
-            const newProduct = { name, price: '£' + price, category, img };
+            const newProduct = { id: Date.now(), name, price: '£' + price, category, stock, img };
             let products = JSON.parse(localStorage.getItem('aura_custom_products') || '[]');
             products.push(newProduct);
             localStorage.setItem('aura_custom_products', JSON.stringify(products));
 
-            alert('Product "' + name + '" successfully added to ' + category.toUpperCase() + ' collection!');
+            alert('Product "' + name + '" successfully added!');
             document.getElementById('prod-name').value = '';
             document.getElementById('prod-price').value = '';
             document.getElementById('prod-img').value = '';
+            loadAdminProducts();
         }
+
+        function loadAdminProducts() {
+            const listContainer = document.getElementById('admin-product-list');
+            let products = JSON.parse(localStorage.getItem('aura_custom_products') || '[]');
+            
+            if (products.length === 0) {
+                listContainer.innerHTML = '<p class='text-xs text-gray-500 italic'>No custom products added yet.</p>';
+                return;
+            }
+
+            let html = '';
+            products.forEach((p, index) => {
+                html += '<div class=\'flex items-center justify-between bg-white p-4 border border-gray-200\'>' +
+                    '<div class=\'flex items-center space-x-4\'>' +
+                        '<img src=\'' + p.img + '\' class=\'w-12 h-12 object-cover\'>' +
+                        '<div>' +
+                            '<h4 class=\'text-xs font-bold uppercase\'>' + p.name + '</h4>' +
+                            '<p class=\'text-[11px] text-gray-500\'>' + p.price + ' &bull; ' + p.category.toUpperCase() + '</p>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class=\'flex items-center space-x-3\'>' +
+                        '<button onclick=\'toggleStock(' + index + ')\' class=\'text-[10px] px-3 py-1.5 uppercase font-bold tracking-wider ' + (p.stock === 'Out of Stock' ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700') + '\'>' + p.stock + '</button>' +
+                        '<button onclick=\'deleteProduct(' + index + ')\' class=\'bg-black text-white text-[10px] px-3 py-1.5 uppercase tracking-wider hover:bg-gray-800\'>Delete</button>' +
+                    '</div>' +
+                '</div>';
+            });
+            listContainer.innerHTML = html;
+        }
+
+        function toggleStock(index) {
+            let products = JSON.parse(localStorage.getItem('aura_custom_products') || '[]');
+            products[index].stock = products[index].stock === 'Out of Stock' ? 'In Stock' : 'Out of Stock';
+            localStorage.setItem('aura_custom_products', JSON.stringify(products));
+            loadAdminProducts();
+        }
+
+        function deleteProduct(index) {
+            if (confirm('Are you sure you want to delete this product?')) {
+                let products = JSON.parse(localStorage.getItem('aura_custom_products') || '[]');
+                products.splice(index, 1);
+                localStorage.setItem('aura_custom_products', JSON.stringify(products));
+                loadAdminProducts();
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', loadAdminProducts);
     </script>
 </body>
 </html>
