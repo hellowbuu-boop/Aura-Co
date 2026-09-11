@@ -11,40 +11,21 @@
         <a href='index.html' class='text-sm font-bold tracking-[0.25em] uppercase'>AURA & CO.</a>
         <nav class='hidden md:flex space-x-8 text-xs tracking-widest uppercase'>
             <a href='index.html' class='hover:text-gray-500 transition'>Home</a>
-            <a href='#checkout-section' class='hover:text-gray-500 transition'>Checkout</a>
+            <a href='shop.html' class='hover:text-gray-500 transition'>Shop</a>
+            <a href='cart.html' class='hover:text-gray-500 transition'>Cart</a>
+            <a href='checkout.html' class='hover:text-gray-500 transition'>Checkout</a>
             <a href='admin.html' class='hover:text-gray-500 transition text-gray-400'>Admin</a>
         </nav>
     </header>
 
-    <section id='hero-banner' class='relative h-[60vh] bg-gray-900 flex items-center justify-center text-center px-6 transition-all duration-500' style='background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url(\'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1600&q=80\'); background-size: cover; background-position: center;'>
+    <section id='hero-banner' class='relative h-[70vh] bg-gray-900 flex items-center justify-center text-center px-6 transition-all duration-500' style='background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url("https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1600&q=80"); background-size: cover; background-position: center;'>
         <div class='max-w-2xl text-white space-y-4'>
             <p class='text-xs tracking-[0.3em] uppercase text-gray-300'>Edinburgh Collection</p>
-            <h1 class='text-4xl md:text-5xl font-light tracking-tight uppercase'>Refined Simplicity.</h1>
+            <h1 class='text-4xl md:text-6xl font-light tracking-tight uppercase'>Refined Simplicity.</h1>
+            <div class='pt-4'>
+                <a href='shop.html' class='bg-white text-black px-8 py-3 text-xs uppercase font-bold tracking-widest hover:bg-gray-200 transition'>Explore Collection</a>
+            </div>
         </div>
-    </section>
-
-    <section id='checkout-section' class='max-w-xl mx-auto py-16 px-6'>
-        <h2 class='text-xl font-light tracking-tight uppercase mb-8 text-center'>Secure Checkout</h2>
-        
-        <form id='checkout-form' onsubmit='validateAndCheckout(event)' class='space-y-6 bg-gray-50 p-8 border border-gray-200'>
-            <div>
-                <label class='block text-[11px] font-medium text-gray-700 uppercase tracking-wider mb-1'>Full Name</label>
-                <input type='text' id='cust-name' required placeholder='John Doe' class='border border-gray-300 p-3 text-xs w-full focus:outline-black bg-white'>
-            </div>
-            
-            <div>
-                <label class='block text-[11px] font-medium text-gray-700 uppercase tracking-wider mb-1'>Email Address (For Order Confirmation)</label>
-                <input type='email' id='cust-email' required placeholder='john@example.com' class='border border-gray-300 p-3 text-xs w-full focus:outline-black bg-white'>
-            </div>
-
-            <div>
-                <label class='block text-[11px] font-medium text-gray-700 uppercase tracking-wider mb-1'>Debit / Credit Card Number (16 Digits)</label>
-                <input type='text' id='card-number' maxlength='16' required placeholder='1234567812345678' class='border border-gray-300 p-3 text-xs w-full focus:outline-black bg-white'>
-                <p id='card-error' class='text-[10px] text-red-600 mt-1 hidden'>Invalid Card! Please enter a valid 16-digit numeric card number.</p>
-            </div>
-
-            <button type='submit' class='w-full bg-black text-white text-xs font-bold tracking-widest uppercase py-4 hover:bg-gray-800 transition'>Complete Order & Send Receipt</button>
-        </form>
     </section>
 
     <script>
@@ -52,30 +33,9 @@
             const savedBanner = localStorage.getItem('aura_main_banner');
             const heroSection = document.getElementById('hero-banner');
             if (savedBanner && heroSection) {
-                heroSection.style.backgroundImage = \linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('\')\;
+                heroSection.style.backgroundImage = 'linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url("' + savedBanner + '")';
             }
         });
-
-        function validateAndCheckout(event) {
-            event.preventDefault();
-            const cardInput = document.getElementById('card-number').value.trim();
-            const cardError = document.getElementById('card-error');
-            const custName = document.getElementById('cust-name').value;
-            const custEmail = document.getElementById('cust-email').value;
-
-            const cardRegex = /^\d{16}$/;
-            if (!cardRegex.test(cardInput)) {
-                cardError.classList.remove('hidden');
-                return;
-            } else {
-                cardError.classList.add('hidden');
-            }
-
-            alert('Payment Successful! Order placed for ' + custName);
-            const subject = encodeURIComponent('New Order from Aura & Co.');
-            const body = encodeURIComponent('Customer Name: ' + custName + '\nEmail: ' + custEmail + '\nCard Verified Successfully.');
-            window.location.href = \mailto:your-email@gmail.com?subject=\&body=\\;
-        }
     </script>
 </body>
 </html>
