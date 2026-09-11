@@ -1,46 +1,220 @@
 ﻿<!DOCTYPE html>
-<html lang='en'>
+<html lang="en">
 <head>
-    <meta charset='UTF-8'>
-    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shop All | AURA & CO.</title>
-    <script src='https://cdn.tailwindcss.com'></script>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class='bg-white text-gray-900 font-sans antialiased'>
-    <header class='border-b border-gray-100 py-6 px-12 flex justify-between items-center bg-white sticky top-0 z-50'>
-        <a href='index.html' class='text-xs font-bold tracking-[0.3em] uppercase'>AURA & CO.</a>
-        <nav class='hidden md:flex space-x-8 text-[11px] tracking-[0.2em] uppercase font-medium text-gray-800'>
-            <a href='index.html' class='hover:text-gray-400 transition'>Home</a>
-            <a href='male.html' class='hover:text-gray-400 transition'>Male</a>
-            <a href='female.html' class='hover:text-gray-400 transition'>Female</a>
-            <a href='kids.html' class='hover:text-gray-400 transition'>Kids</a>
-            <a href='shop.html' class='text-black font-bold'>Shop All</a>
-            <a href='cart.html' class='hover:text-gray-400 transition'>Cart</a>
-            <a href='checkout.html' class='hover:text-gray-400 transition'>Checkout</a>
+<body class="bg-white text-gray-900 font-sans antialiased">
+    <header class="border-b border-gray-100 py-6 px-12 flex justify-between items-center bg-white sticky top-0 z-50">
+        <a href="index.html" id="secret-admin-logo" class="text-xs font-bold tracking-[0.3em] uppercase select-none cursor-pointer">AURA & CO.</a>
+        <nav class="hidden md:flex space-x-8 text-[11px] tracking-[0.2em] uppercase font-medium text-gray-800">
+            <a href="index.html" class="hover:text-gray-400 transition">Home</a>
+            <a href="male.html" class="hover:text-gray-400 transition">Male</a>
+            <a href="female.html" class="hover:text-gray-400 transition">Female</a>
+            <a href="kids.html" class="hover:text-gray-400 transition">Kids</a>
+            <a href="shop.html" class="text-black font-bold">Shop All</a>
+            <a href="cart.html" class="hover:text-gray-400 transition">Cart</a>
+            <a href="checkout.html" class="hover:text-gray-400 transition">Checkout</a>
+            <span id="admin-badge" class="hidden text-red-600 font-bold tracking-widest bg-red-50 px-2 py-1 text-[9px]">ADMIN MODE ON</span>
         </nav>
     </header>
-    <main class='max-w-7xl mx-auto py-20 px-8'>
-        <h1 class='text-2xl font-light tracking-widest uppercase mb-12 text-center'>Complete Catalog</h1>
-        <div class='grid grid-cols-1 md:grid-cols-3 gap-10'>
-            <div class='group cursor-pointer'>
-                <div class='overflow-hidden bg-gray-100 mb-4'><img src='https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=600&q=80' class='w-full h-96 object-cover group-hover:scale-105 transition duration-500'></div>
-                <h3 class='text-xs uppercase tracking-widest font-medium'>Cashmere Overcoat</h3>
-                <p class='text-xs text-gray-500 mt-1'>£240.00</p>
-                <a href='cart.html' class='block text-center mt-4 bg-black text-white text-[10px] uppercase tracking-[0.2em] py-3 hover:bg-gray-800 transition'>Add to Bag</a>
-            </div>
-            <div class='group cursor-pointer'>
-                <div class='overflow-hidden bg-gray-100 mb-4'><img src='https://images.unsplash.com/photo-1434389677669-e08b4cac3105?auto=format&fit=crop&w=600&q=80' class='w-full h-96 object-cover group-hover:scale-105 transition duration-500'></div>
-                <h3 class='text-xs uppercase tracking-widest font-medium'>Merino Wool Knit</h3>
-                <p class='text-xs text-gray-500 mt-1'>£120.00</p>
-                <a href='cart.html' class='block text-center mt-4 bg-black text-white text-[10px] uppercase tracking-[0.2em] py-3 hover:bg-gray-800 transition'>Add to Bag</a>
-            </div>
-            <div class='group cursor-pointer'>
-                <div class='overflow-hidden bg-gray-100 mb-4'><img src='https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=600&q=80' class='w-full h-96 object-cover group-hover:scale-105 transition duration-500'></div>
-                <h3 class='text-xs uppercase tracking-widest font-medium'>Tailored Linen Trousers</h3>
-                <p class='text-xs text-gray-500 mt-1'>£95.00</p>
-                <a href='cart.html' class='block text-center mt-4 bg-black text-white text-[10px] uppercase tracking-[0.2em] py-3 hover:bg-gray-800 transition'>Add to Bag</a>
-            </div>
+
+    <main class="max-w-7xl mx-auto py-20 px-8">
+        <div class="flex justify-between items-center mb-12">
+            <h1 class="text-2xl font-light tracking-widest uppercase">Complete Catalog</h1>
+            <div id="admin-add-btn-container"></div>
+        </div>
+
+        <!-- Product Grid -->
+        <div id="product-grid" class="grid grid-cols-1 md:grid-cols-3 gap-10">
+            <!-- Default static products will be rendered along with custom admin products -->
         </div>
     </main>
+
+    <!-- Admin Add/Edit Modal -->
+    <div id="admin-modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-50">
+        <div class="bg-white p-8 max-w-md w-full space-y-4 border border-gray-200">
+            <h3 id="modal-title" class="text-xs font-bold uppercase tracking-widest">Add New Product</h3>
+            <input type="hidden" id="edit-index" value="-1">
+            <div>
+                <label class="block text-[10px] font-bold uppercase tracking-wider mb-1">Product Name</label>
+                <input type="text" id="modal-name" class="border border-gray-300 p-3 text-xs w-full bg-white">
+            </div>
+            <div>
+                <label class="block text-[10px] font-bold uppercase tracking-wider mb-1">Price (£)</label>
+                <input type="text" id="modal-price" class="border border-gray-300 p-3 text-xs w-full bg-white">
+            </div>
+            <div>
+                <label class="block text-[10px] font-bold uppercase tracking-wider mb-1">Category</label>
+                <select id="modal-category" class="border border-gray-300 p-3 text-xs w-full bg-white uppercase">
+                    <option value="shop">Shop All</option>
+                    <option value="male">Male Collection</option>
+                    <option value="female">Female Collection</option>
+                    <option value="kids">Kids Collection</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-[10px] font-bold uppercase tracking-wider mb-1">Stock Status</label>
+                <select id="modal-stock" class="border border-gray-300 p-3 text-xs w-full bg-white uppercase">
+                    <option value="In Stock">In Stock</option>
+                    <option value="Out of Stock">Out of Stock</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-[10px] font-bold uppercase tracking-wider mb-1">Image URL</label>
+                <input type="text" id="modal-img" class="border border-gray-300 p-3 text-xs w-full bg-white">
+            </div>
+            <div class="flex space-x-4 pt-2">
+                <button onclick="saveProduct()" class="flex-1 bg-black text-white text-[10px] uppercase font-bold tracking-widest py-3">Save Product</button>
+                <button onclick="closeModal()" class="flex-1 bg-gray-200 text-gray-800 text-[10px] uppercase font-bold tracking-widest py-3">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const defaultProducts = [
+            { name: 'Cashmere Overcoat', price: '£240.00', category: 'male', stock: 'In Stock', img: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=600&q=80' },
+            { name: 'Merino Wool Knit', price: '£120.00', category: 'shop', stock: 'In Stock', img: 'https://images.unsplash.com/photo-1434389677669-e08b4cac3105?auto=format&fit=crop&w=600&q=80' },
+            { name: 'Tailored Linen Trousers', price: '£95.00', category: 'female', stock: 'In Stock', img: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=600&q=80' }
+        ];
+
+        function renderStore() {
+            let customProducts = JSON.parse(localStorage.getItem('aura_custom_products') || 'null');
+            if (!customProducts) {
+                customProducts = defaultProducts;
+                localStorage.setItem('aura_custom_products', JSON.stringify(customProducts));
+            }
+
+            const isAdmin = localStorage.getItem('aura_admin_logged') === 'true';
+            if (isAdmin) {
+                document.getElementById('admin-badge').classList.remove('hidden');
+                document.getElementById('admin-add-btn-container').innerHTML = '<button onclick="openModal()" class="bg-black text-white text-[10px] font-bold tracking-widest uppercase px-6 py-3 hover:bg-gray-800">+ Add New Product</button>';
+            }
+
+            const grid = document.getElementById('product-grid');
+            let html = '';
+
+            customProducts.forEach((p, index) => {
+                let stockBadge = p.stock === 'Out of Stock' ? '<span class="text-[10px] text-red-600 font-bold uppercase tracking-wider block mt-1">Out of Stock</span>' : '';
+                
+                let adminControls = '';
+                if (isAdmin) {
+                    let stockToggleText = p.stock === 'Out of Stock' ? 'Make In Stock' : 'Make Out of Stock';
+                    adminControls = '<div class="mt-4 pt-3 border-t border-gray-100 flex justify-between items-center bg-gray-50 p-2">' +
+                        '<button onclick="editProduct(' + index + ')" class="text-[9px] font-bold uppercase tracking-widest bg-blue-600 text-white px-2.5 py-1">Edit</button>' +
+                        '<button onclick="toggleStock(' + index + ')" class="text-[9px] font-bold uppercase tracking-widest ' + (p.stock === 'Out of Stock' ? 'bg-green-600 text-green-100' : 'bg-amber-500 text-white') + ' px-2.5 py-1">' + stockToggleText + '</button>' +
+                        '<button onclick="deleteProduct(' + index + ')" class="text-[9px] font-bold uppercase tracking-widest bg-red-600 text-white px-2.5 py-1">Delete</button>' +
+                    '</div>';
+                }
+
+                html += '<div class="group cursor-pointer border border-gray-100 p-4 bg-white">' +
+                    '<div class="overflow-hidden bg-gray-100 mb-4">' +
+                        '<img src="' + p.img + '" class="w-full h-96 object-cover group-hover:scale-105 transition duration-500">' +
+                    '</div>' +
+                    '<h3 class="text-xs uppercase tracking-widest font-medium">' + p.name + '</h3>' +
+                    '<p class="text-xs text-gray-500 mt-1">' + p.price + '</p>' +
+                    stockBadge +
+                    '<a href="cart.html" class="block text-center mt-4 bg-black text-white text-[10px] uppercase tracking-[0.2em] py-3 hover:bg-gray-800 transition">Add to Bag</a>' +
+                    adminControls +
+                '</div>';
+            });
+
+            grid.innerHTML = html;
+        }
+
+        function openModal(index = -1) {
+            document.getElementById('admin-modal').classList.remove('hidden');
+            if (index > -1) {
+                let products = JSON.parse(localStorage.getItem('aura_custom_products'));
+                let p = products[index];
+                document.getElementById('modal-title').innerText = 'Edit Product';
+                document.getElementById('edit-index').value = index;
+                document.getElementById('modal-name').value = p.name;
+                document.getElementById('modal-price').value = p.price.replace('£', '');
+                document.getElementById('modal-category').value = p.category;
+                document.getElementById('modal-stock').value = p.stock;
+                document.getElementById('modal-img').value = p.img;
+            } else {
+                document.getElementById('modal-title').innerText = 'Add New Product';
+                document.getElementById('edit-index').value = '-1';
+                document.getElementById('modal-name').value = '';
+                document.getElementById('modal-price').value = '';
+                document.getElementById('modal-img').value = '';
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('admin-modal').classList.add('hidden');
+        }
+
+        function saveProduct() {
+            const name = document.getElementById('modal-name').value.trim();
+            const price = document.getElementById('modal-price').value.trim();
+            const category = document.getElementById('modal-category').value;
+            const stock = document.getElementById('modal-stock').value;
+            const img = document.getElementById('modal-img').value.trim();
+            const editIndex = parseInt(document.getElementById('edit-index').value);
+
+            if (!name || !price || !img) {
+                alert('Please fill out all fields.');
+                return;
+            }
+
+            let products = JSON.parse(localStorage.getItem('aura_custom_products') || '[]');
+            if (editIndex > -1) {
+                products[editIndex] = { name, price: '£' + price, category, stock, img };
+            } else {
+                products.push({ name, price: '£' + price, category, stock, img });
+            }
+
+            localStorage.setItem('aura_custom_products', JSON.stringify(products));
+            closeModal();
+            renderStore();
+        }
+
+        function editProduct(index) {
+            openModal(index);
+        }
+
+        function toggleStock(index) {
+            let products = JSON.parse(localStorage.getItem('aura_custom_products'));
+            products[index].stock = products[index].stock === 'Out of Stock' ? 'In Stock' : 'Out of Stock';
+            localStorage.setItem('aura_custom_products', JSON.stringify(products));
+            renderStore();
+        }
+
+        function deleteProduct(index) {
+            if (confirm('Are you sure you want to delete this product?')) {
+                let products = JSON.parse(localStorage.getItem('aura_custom_products'));
+                products.splice(index, 1);
+                localStorage.setItem('aura_custom_products', JSON.stringify(products));
+                renderStore();
+            }
+        }
+
+        // 5-Tap Secret Admin Mode Trigger on Logo
+        let tapCount = 0;
+        document.getElementById('secret-admin-logo').addEventListener('click', (e) => {
+            e.preventDefault();
+            tapCount++;
+            if (tapCount === 5) {
+                let isAdmin = localStorage.getItem('aura_admin_logged') === 'true';
+                if (isAdmin) {
+                    localStorage.setItem('aura_admin_logged', 'false');
+                    alert('Admin Mode Disabled.');
+                } else {
+                    localStorage.setItem('aura_admin_logged', 'true');
+                    alert('Admin Mode Enabled!');
+                }
+                location.reload();
+            } else if (tapCount === 1) {
+                setTimeout(() => { tapCount = 0; }, 1000);
+            }
+        });
+
+        window.addEventListener('DOMContentLoaded', renderStore);
+    </script>
 </body>
 </html>

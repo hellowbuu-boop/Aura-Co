@@ -1,56 +1,65 @@
 ﻿<!DOCTYPE html>
-<html lang='en'>
+<html lang="en">
 <head>
-    <meta charset='UTF-8'>
-    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AURA & CO. | Refined Scottish Essentials</title>
-    <script src='https://cdn.tailwindcss.com'></script>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class='bg-white text-gray-900 font-sans antialiased'>
-    <header class='border-b border-gray-100 py-6 px-12 flex justify-between items-center bg-white sticky top-0 z-50'>
-        <!-- Secret 5-tap trigger on AURA & CO. logo -->
-        <a href='#' id='secret-admin-logo' class='text-xs font-bold tracking-[0.3em] uppercase select-none'>AURA & CO.</a>
-        <nav class='hidden md:flex space-x-8 text-[11px] tracking-[0.2em] uppercase font-medium text-gray-800'>
-            <a href='index.html' class='text-black font-bold'>Home</a>
-            <a href='male.html' class='hover:text-gray-400 transition'>Male</a>
-            <a href='female.html' class='hover:text-gray-400 transition'>Female</a>
-            <a href='kids.html' class='hover:text-gray-400 transition'>Kids</a>
-            <a href='shop.html' class='hover:text-gray-400 transition'>Shop All</a>
-            <a href='cart.html' class='hover:text-gray-400 transition'>Cart</a>
-            <a href='checkout.html' class='hover:text-gray-400 transition'>Checkout</a>
+<body class="bg-white text-gray-900 font-sans antialiased">
+    <header class="border-b border-gray-100 py-6 px-12 flex justify-between items-center bg-white sticky top-0 z-50">
+        <a href="index.html" id="secret-admin-logo" class="text-xs font-bold tracking-[0.3em] uppercase select-none cursor-pointer">AURA & CO.</a>
+        <nav class="hidden md:flex space-x-8 text-[11px] tracking-[0.2em] uppercase font-medium text-gray-800">
+            <a href="index.html" class="text-black font-bold">Home</a>
+            <a href="male.html" class="hover:text-gray-400 transition">Male</a>
+            <a href="female.html" class="hover:text-gray-400 transition">Female</a>
+            <a href="kids.html" class="hover:text-gray-400 transition">Kids</a>
+            <a href="shop.html" class="hover:text-gray-400 transition">Shop All</a>
+            <a href="cart.html" class="hover:text-gray-400 transition">Cart</a>
+            <a href="checkout.html" class="hover:text-gray-400 transition">Checkout</a>
+            <span id="admin-badge" class="hidden text-red-600 font-bold tracking-widest bg-red-50 px-2 py-1 text-[9px]">ADMIN MODE ON</span>
         </nav>
     </header>
 
-    <section id='hero-banner' class='relative h-[80vh] bg-gray-900 flex items-center justify-center text-center px-6 transition-all duration-500' style='background-image: linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)), url("https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1600&q=80"); background-size: cover; background-position: center;'>
-        <div class='max-w-2xl text-white space-y-4'>
-            <p class='text-[10px] tracking-[0.4em] uppercase text-gray-300'>Edinburgh Luxury Collection</p>
-            <h1 class='text-4xl md:text-6xl font-light tracking-tight uppercase'>Refined Simplicity.</h1>
-            <div class='pt-6 flex justify-center space-x-4'>
-                <a href='shop.html' class='bg-white text-black px-8 py-4 text-[10px] uppercase font-bold tracking-[0.25em] hover:bg-gray-100 transition'>Explore Collection</a>
+    <section id="hero-banner" class="relative h-[80vh] bg-gray-900 flex items-center justify-center text-center px-6 transition-all duration-500" style="background-image: linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)), url('https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1600&q=80'); background-size: cover; background-position: center;">
+        <div class="max-w-2xl text-white space-y-4">
+            <p class="text-[10px] tracking-[0.4em] uppercase text-gray-300">Edinburgh Luxury Collection</p>
+            <h1 class="text-4xl md:text-6xl font-light tracking-tight uppercase">Refined Simplicity.</h1>
+            <div class="pt-6 flex justify-center space-x-4">
+                <a href="shop.html" class="bg-white text-black px-8 py-4 text-[10px] uppercase font-bold tracking-[0.25em] hover:bg-gray-100 transition">Explore Collection</a>
             </div>
         </div>
     </section>
 
     <script>
-        // Load custom banner if saved
         window.addEventListener('DOMContentLoaded', () => {
             const savedBanner = localStorage.getItem('aura_main_banner');
             const heroSection = document.getElementById('hero-banner');
             if (savedBanner && heroSection) {
                 heroSection.style.backgroundImage = 'linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)), url("' + savedBanner + '")';
             }
+            if (localStorage.getItem('aura_admin_logged') === 'true') {
+                document.getElementById('admin-badge').classList.remove('hidden');
+            }
         });
 
-        // Secret 5-tap trigger on AURA & CO. logo
+        // 5-Tap Secret Admin Mode Trigger
         let tapCount = 0;
         document.getElementById('secret-admin-logo').addEventListener('click', (e) => {
             e.preventDefault();
             tapCount++;
             if (tapCount === 5) {
-                alert('Secret Admin Access Granted!');
-                window.location.href = 'admin.html';
+                let isAdmin = localStorage.getItem('aura_admin_logged') === 'true';
+                if (isAdmin) {
+                    localStorage.setItem('aura_admin_logged', 'false');
+                    alert('Admin Mode Disabled.');
+                    location.reload();
+                } else {
+                    localStorage.setItem('aura_admin_logged', 'true');
+                    alert('Admin Mode Enabled! You can now edit/delete products directly on shop pages.');
+                    location.href = 'shop.html';
+                }
             } else if (tapCount === 1) {
-                // Reset counter if user stops tapping for more than 1 second
                 setTimeout(() => { tapCount = 0; }, 1000);
             }
         });
