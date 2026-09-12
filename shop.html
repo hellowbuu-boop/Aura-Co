@@ -14,7 +14,7 @@
             <a href="male.html" class="hover:text-gray-400 transition">Male</a>
             <a href="female.html" class="hover:text-gray-400 transition">Female</a>
             <a href="kids.html" class="hover:text-gray-400 transition">Kids</a>
-            <a href="shop.html" class="text-black font-bold">Shop All</a>
+            <a href="shop.html" class="text-black font-bold transition">Shop All</a>
             <a href="cart.html" class="hover:text-gray-400 transition">Cart</a>
             <a href="checkout.html" class="hover:text-gray-400 transition">Checkout</a>
             <span id="admin-badge" class="hidden text-red-600 font-bold tracking-widest bg-red-50 px-2 py-1 text-[9px]">ADMIN MODE ON</span>
@@ -23,12 +23,13 @@
 
     <main class="max-w-7xl mx-auto py-20 px-8">
         <div class="flex justify-between items-center mb-12">
-            <h1 class="text-2xl font-light tracking-widest uppercase">Complete Catalog</h1>
+            <h1 class="text-2xl font-light tracking-widest uppercase">Shop All Collection</h1>
             <div id="admin-add-btn-container"></div>
         </div>
 
-        <!-- Product Grid -->
-        <div id="product-grid" class="grid grid-cols-1 md:grid-cols-3 gap-10"></div>
+        <div id="product-grid" class="grid grid-cols-1 md:grid-cols-3 gap-10">
+            <p class="text-xs text-gray-400 col-span-3 text-center uppercase tracking-widest py-10">Loading global collection...</p>
+        </div>
     </main>
 
     <!-- Admin Add/Edit Modal -->
@@ -65,26 +66,71 @@
                 <input type="text" id="modal-img" class="border border-gray-300 p-3 text-xs w-full bg-white">
             </div>
             <div class="flex space-x-4 pt-2">
-                <button onclick="saveProduct()" class="flex-1 bg-black text-white text-[10px] uppercase font-bold tracking-widest py-3">Save Product</button>
+                <button onclick="saveProductToGitHub()" class="flex-1 bg-black text-white text-[10px] uppercase font-bold tracking-widest py-3">Save Globally</button>
                 <button onclick="closeModal()" class="flex-1 bg-gray-200 text-gray-800 text-[10px] uppercase font-bold tracking-widest py-3">Cancel</button>
             </div>
         </div>
     </div>
 
     <script>
-        const defaultProducts = [
-            { name: 'Cashmere Overcoat', price: '£240.00', category: 'male', stock: 'In Stock', img: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=600&q=80' },
-            { name: 'Merino Wool Knit', price: '£120.00', category: 'shop', stock: 'In Stock', img: 'https://images.unsplash.com/photo-1434389677669-e08b4cac3105?auto=format&fit=crop&w=600&q=80' },
-            { name: 'Tailored Linen Trousers', price: '£95.00', category: 'female', stock: 'In Stock', img: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=600&q=80' }
-        ];
+        const GITHUB_USER = "hellowbuu-boop";
+        const REPO_NAME = "Aura-Co";
 
-        function renderStore() {
-            let customProducts = JSON.parse(localStorage.getItem('aura_custom_products') || 'null');
-            if (!customProducts) {
-                customProducts = defaultProducts;
-                localStorage.setItem('aura_custom_products', JSON.stringify(customProducts));
+        let globalProducts = [];
+        let fileSha = "";
+
+        async function fetchProducts() {
+            try {
+                let res = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${REPO_NAME}/contents/products.json?t=` + new Date().getTime());
+                let data = await res.json();
+                fileSha = data.sha;
+                let decodedContent = decodeURIComponent(escape(atob(data.content)));
+                globalProducts = JSON.parse(decodedContent);
+                renderShop();
+            } catch (err) {
+                console.error(err);
+                document.getElementById('product-grid').innerHTML = '<p class="text-xs text-red-500 col-span-3 text-center uppercase tracking-widest">Failed to load global products.</p>';
+            }
+        }
+
+        async function updateGitHubFile(updatedProducts, successMessage) {
+            const token = localStorage.getItem('github_token');
+            if (!token) {
+                alert('Admin token missing! Please re-enable admin mode.');
+                return;
             }
 
+            try {
+                let contentEncoded = btoa(unescape(encodeURIComponent(JSON.stringify(updatedProducts, null, 4))));
+                let res = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${REPO_NAME}/contents/products.json`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': 'token ' + token,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: "Global sync: update products.json via website admin",
+                        content: contentEncoded,
+                        sha: fileSha
+                    })
+                });
+
+                if (res.ok) {
+                    let result = await res.json();
+                    fileSha = result.content.sha;
+                    globalProducts = updatedProducts;
+                    alert(successMessage);
+                    renderShop();
+                } else {
+                    alert('Sync failed! Check your token.');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Network error during global sync.');
+            }
+        }
+
+        function renderShop() {
             const isAdmin = localStorage.getItem('aura_admin_logged') === 'true';
             if (isAdmin) {
                 document.getElementById('admin-badge').classList.remove('hidden');
@@ -94,7 +140,7 @@
             const grid = document.getElementById('product-grid');
             let html = '';
 
-            customProducts.forEach((p, index) => {
+            globalProducts.forEach((p, index) => {
                 let stockBadge = p.stock === 'Out of Stock' ? '<span class="text-[10px] text-red-600 font-bold uppercase tracking-wider block mt-1">Out of Stock</span>' : '';
                 
                 let adminControls = '';
@@ -114,19 +160,25 @@
                     '<h3 class="text-xs uppercase tracking-widest font-medium">' + p.name + '</h3>' +
                     '<p class="text-xs text-gray-500 mt-1">' + p.price + '</p>' +
                     stockBadge +
-                    '<a href="cart.html" class="block text-center mt-4 bg-black text-white text-[10px] uppercase tracking-[0.2em] py-3 hover:bg-gray-800 transition">Add to Bag</a>' +
+                    '<button onclick="addToCart(\'' + p.name + '\', \'' + p.price + '\', \'' + p.img + '\')" class="w-full mt-4 bg-black text-white text-[10px] uppercase tracking-[0.2em] py-3 hover:bg-gray-800 transition">Add to Bag</button>' +
                     adminControls +
                 '</div>';
             });
 
-            grid.innerHTML = html;
+            grid.innerHTML = html || '<p class="text-xs text-gray-500 uppercase tracking-widest col-span-3 text-center py-10">No products available.</p>';
+        }
+
+        function addToCart(name, price, img) {
+            let cart = JSON.parse(localStorage.getItem('aura_cart') || '[]');
+            cart.push({ name, price, img });
+            localStorage.setItem('aura_cart', JSON.stringify(cart));
+            alert('Product added to bag successfully!');
         }
 
         function openModal(index = -1) {
             document.getElementById('admin-modal').classList.remove('hidden');
             if (index > -1) {
-                let products = JSON.parse(localStorage.getItem('aura_custom_products'));
-                let p = products[index];
+                let p = globalProducts[index];
                 document.getElementById('modal-title').innerText = 'Edit Product';
                 document.getElementById('edit-index').value = index;
                 document.getElementById('modal-name').value = p.name;
@@ -147,7 +199,7 @@
             document.getElementById('admin-modal').classList.add('hidden');
         }
 
-        function saveProduct() {
+        async function saveProductToGitHub() {
             const name = document.getElementById('modal-name').value.trim();
             const price = document.getElementById('modal-price').value.trim();
             const category = document.getElementById('modal-category').value;
@@ -160,51 +212,59 @@
                 return;
             }
 
-            let products = JSON.parse(localStorage.getItem('aura_custom_products') || '[]');
+            let updatedList = [...globalProducts];
+            let formattedPrice = price.startsWith('£') ? price : '£' + price;
+
             if (editIndex > -1) {
-                products[editIndex] = { name, price: '£' + price, category, stock, img };
+                updatedList[editIndex] = { name, price: formattedPrice, category, stock, img };
             } else {
-                products.push({ name, price: '£' + price, category, stock, img });
+                updatedList.push({ name, price: formattedPrice, category, stock, img });
             }
 
-            localStorage.setItem('aura_custom_products', JSON.stringify(products));
             closeModal();
-            renderStore();
+            document.getElementById('product-grid').innerHTML = '<p class="text-xs text-gray-500 col-span-3 text-center uppercase tracking-widest py-10">Syncing globally with GitHub...</p>';
+            await updateGitHubFile(updatedList, 'Product saved and synced globally!');
         }
 
-        function editProduct(index) {
+        async function editProduct(index) {
             openModal(index);
         }
 
-        function toggleStock(index) {
-            let products = JSON.parse(localStorage.getItem('aura_custom_products'));
-            products[index].stock = products[index].stock === 'Out of Stock' ? 'In Stock' : 'Out of Stock';
-            localStorage.setItem('aura_custom_products', JSON.stringify(products));
-            renderStore();
+        async function toggleStock(index) {
+            let updatedList = [...globalProducts];
+            updatedList[index].stock = updatedList[index].stock === 'Out of Stock' ? 'In Stock' : 'Out of Stock';
+            await updateGitHubFile(updatedList, 'Stock status updated globally!');
         }
 
-        function deleteProduct(index) {
-            if (confirm('Are you sure you want to delete this product?')) {
-                let products = JSON.parse(localStorage.getItem('aura_custom_products'));
-                products.splice(index, 1);
-                localStorage.setItem('aura_custom_products', JSON.stringify(products));
-                renderStore();
+        async function deleteProduct(index) {
+            if (confirm('Are you sure you want to delete this product globally?')) {
+                let updatedList = [...globalProducts];
+                updatedList.splice(index, 1);
+                await updateGitHubFile(updatedList, 'Product deleted and synced globally!');
             }
         }
 
-        // 5-Tap Secret Admin Mode Trigger on Logo
         let tapCount = 0;
         document.getElementById('secret-admin-logo').addEventListener('click', (e) => {
             e.preventDefault();
             tapCount++;
             if (tapCount === 5) {
                 let isAdmin = localStorage.getItem('aura_admin_logged') === 'true';
-                if (isAdmin) {
-                    localStorage.setItem('aura_admin_logged', 'false');
-                    alert('Admin Mode Disabled.');
+                if (!isAdmin) {
+                    let tokenInput = prompt("Enter your GitHub Personal Access Token for global sync:");
+                    if (tokenInput && tokenInput.trim() !== "") {
+                        localStorage.setItem('github_token', tokenInput.trim());
+                        localStorage.setItem('aura_admin_logged', 'true');
+                        alert('Admin Mode Enabled successfully!');
+                    } else {
+                        alert('Valid token is required to enable admin mode.');
+                        tapCount = 0;
+                        return;
+                    }
                 } else {
-                    localStorage.setItem('aura_admin_logged', 'true');
-                    alert('Admin Mode Enabled!');
+                    localStorage.setItem('aura_admin_logged', 'false');
+                    localStorage.removeItem('github_token');
+                    alert('Admin Mode Disabled');
                 }
                 location.reload();
             } else if (tapCount === 1) {
@@ -212,7 +272,7 @@
             }
         });
 
-        window.addEventListener('DOMContentLoaded', renderStore);
+        window.addEventListener('DOMContentLoaded', fetchProducts);
     </script>
 </body>
 </html>
